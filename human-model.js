@@ -136,6 +136,57 @@
   // ------------
   var registry = new Registry();
 
+  // our dataTypes
+  var dataTypes = {
+    date: {
+      set: function (newVal) {
+        var newType;
+        if (!_.isDate(newVal)) {
+          try {
+            newVal = (new Date(parseInt(newVal, 10))).valueOf();
+            newType = 'date';
+          } catch (e) {
+            newType = typeof newVal;
+          }
+        } else {
+          newType = 'date';
+          newVal = newVal.valueOf();
+        }
+        return {
+          val: newVal,
+          type: newType
+        };
+      },
+      get: function (val) {
+        return new Date(val);
+      }
+    },
+    array: {
+      set: function (newVal) {
+        return {
+          val: newVal,
+          type: _.isArray(newVal) ? 'array' : typeof newVal
+        };
+      }
+    },
+    object: {
+      set: function (newVal) {
+        var newType = typeof newVal;
+        // we have to have a way of supporting "missing" objects.
+        // Null is an object, but setting a value to undefined
+        // should work too, IMO. We just override it, in that case.
+        if (newType !== 'object' && _.isUndefined(newVal)) {
+          newVal = null;
+          newType = 'object';
+        }
+        return {
+          val: newVal,
+          type: newType
+        };
+      }
+    }
+  };
+
   define = function (spec) {
     spec || (spec = {});
     var key;
@@ -283,28 +334,10 @@
           }
 
           // check type if we have one
-          if (def.type === 'date') {
-            if (!_.isDate(newVal)) {
-              try {
-                newVal = (new Date(parseInt(newVal, 10))).valueOf();
-                newType = 'date';
-              } catch (e) {
-                newType = typeof newVal;
-              }
-            } else {
-              newType = 'date';
-              newVal = newVal.valueOf();
-            }
-          } else if (def.type === 'array') {
-            newType = _.isArray(newVal) ? 'array' : typeof newVal;
-          } else if (def.type === 'object') {
-            // we have to have a way of supporting "missing" objects.
-            // Null is an object, but setting a value to undefined
-            // should work too, IMO. We just override it, in that case.
-            if (typeof newVal !== 'object' && _.isUndefined(newVal)) {
-              newVal = null;
-              newType = 'object';
-            }
+          if (dataTypes[def.type]) {
+            var cast = dataTypes[def.type].set(newVal);
+            newVal = cast.val;
+            newType = cast.type;
           }
 
           // If we have a defined type and the new type doesn't match, throw error.
@@ -672,11 +705,12 @@
             self.set(name, val);
           },
           get: function () {
-            if (typeof self._values[name] !== 'undefined') {
-              if (def.type === 'date') {
-                return new Date(self._values[name]);
+            var result = self._values[name];
+            if (typeof result !== 'undefined') {
+              if (dataTypes[def.type] && dataTypes[def.type].get) {
+                return dataTypes[def.type].get(result);
               }
-              return self._values[name];
+              return result;
             }
             return;
           }
@@ -701,7 +735,7 @@
       // just makes friendlier errors when trying to define a new model
       // only used when setting up original property definitions
       _ensureValidType: function (type) {
-        return _.contains(['string', 'number', 'boolean', 'array', 'object', 'date', 'any'], type) ? type : undefined;
+        return _.contains(['string', 'number', 'boolean', 'array', 'object', 'date', 'any'].concat(_.keys(dataTypes)), type) ? type : undefined;
       },
 
       _getAttributes: function (includeSession, raw) {
@@ -767,7 +801,8 @@
   var out = {
     define: define,
     registry: registry,
-    Registry: Registry
+    Registry: Registry,
+    dataTypes: dataTypes
   };
 
   if (typeof exports !== 'undefined') {
