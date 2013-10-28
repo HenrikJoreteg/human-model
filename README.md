@@ -33,11 +33,15 @@ Besides that and the obvious differences, any behavior that doesn't match Backbo
 Schema definitions take an attribute called `props` to defined properties.
 
 Property names can be defined two different ways, either an array with `[type, required, default]`,
-or an object: `{ type: 'string', required: true, default: '' }`
+or an object: `{ type: 'string', required: true, default: '' , allowNull: false}`
 
 types can be: `string`, `number`, `boolean`, `array`, `object`, or `date`
 required: true, false (optional)
 default: any (optional)
+allowNull: true, false (optional)
+
+Note that when defining with an array `type`, `required`, and `default`
+are the only property attributes you can set.
 
 ```js
 props: {
@@ -192,6 +196,7 @@ Created by [@HenrikJoreteg](http://twitter.com/henrikjoreteg) with contributions
 
 ## Changelog
 
+ - 2.1.0 - Added allowNull parameter to property definitions
  - 2.0.0 - Minor, but incompatible fix that remove `toServer` getter in lieu of adding `serialize` method that can be overridden.
  - 1.4.0 - Find/fix performance bottleneck. Significantly faster to instantiate larger numbers of models now.
  - 1.3.0 - Fix bug where session props were included in `.save()`
