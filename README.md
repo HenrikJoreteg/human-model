@@ -38,10 +38,20 @@ or an object: `{ type: 'string', required: true, default: '' , allowNull: false}
 types can be: `string`, `number`, `boolean`, `array`, `object`, or `date`
 required: true, false (optional)
 default: any (optional)
+setOnce: true, false (optional)
+test: function (optional)
 allowNull: true, false (optional)
 
 Note that when defining with an array `type`, `required`, and `default`
 are the only property attributes you can set.
+
+If required is true, the attribute will always have a value even if it is not explicitly set or is cleared.  If a default is given, that will be used.  If no default is given a default for its data type will be used (e.g. '' for string, {} for object)
+
+If a default is given, the attribute will default to that value when the model is instantiated.
+
+If setOnce is true, the attribute will throw an error if anything tries to set its value more than once.
+
+If given, test should be a function that expects the new value (and optionally the new type) of the attribute.  It should return an error message on failure, and false on success
 
 ```js
 props: {
@@ -65,14 +75,25 @@ var Person = HumanModel.define({
     },
     // props are for properties that exist on the server
     props: {
-        id: ['string', true],
+        id: {
+            type: 'number',
+            setOnce: true
+        },
         firstName: ['string', true],
         lastName: ['string', true],
         created: ['date'],
         email: ['string', true],
         username: ['string', true],
         lastLogin: ['date'],
-        largePicUrl: ['string']
+        largePicUrl: ['string'],
+        department: {
+            type: 'string',
+            test: function (val) {
+                if (val !== 'sales' && val !== 'billing') {
+                    return "Invalid department";
+                }
+            }
+        }
     },
     // derived properties and their dependencies. If any dependency changes
     // that will also trigger a 'change' event on the derived property so
@@ -196,6 +217,7 @@ Created by [@HenrikJoreteg](http://twitter.com/henrikjoreteg) with contributions
 
 ## Changelog
 
+ - 2.2.0 - Added test parameter to property definitions
  - 2.1.0 - Added allowNull parameter to property definitions
  - 2.0.0 - Minor, but incompatible fix that remove `toServer` getter in lieu of adding `serialize` method that can be overridden.
  - 1.4.0 - Find/fix performance bottleneck. Significantly faster to instantiate larger numbers of models now.

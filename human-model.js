@@ -346,6 +346,14 @@
             newType = cast.type;
           }
 
+          //If we've defined a test, run it
+          if (def.test) {
+            var err = def.test(newVal, newType);
+            if (err) {
+              throw new TypeError('Property \'' + attr + '\' failed validation with error: ' + err);
+            }
+          }
+
           // If we are required but undefined, throw error.
           // If we are null and are not allowing null, throw error
           // If we have a defined type and the new type doesn't match, and we are not null, throw error.
@@ -711,6 +719,7 @@
           def.allowNull = desc.allowNull ? desc.allowNull : false;
           if (desc.setOnce) def.setOnce = true;
           if (def.required && _.isUndefined(def.default)) def.default = this._getDefaultForType(type);
+          def.test = desc.test;
         }
         if (isSession) def.session = true;
 
