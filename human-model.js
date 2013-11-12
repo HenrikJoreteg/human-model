@@ -644,8 +644,8 @@
         var type = def.type;
         var val;
         if (def.required) {
-          if (!_.isUndefined(def.default)) {
-            val = def.default;
+          if (!_.isUndefined(def['default'])) {
+            val = def['default'];
           } else {
             val = this._getDefaultForType(type);
           }
@@ -747,10 +747,10 @@
           if (type) def.type = type;
           if (desc[1] || desc.required) def.required = true;
           // set default if defined
-          def.default = !_.isUndefined(desc[2]) ? desc[2] : desc.default;
+          def['default'] = !_.isUndefined(desc[2]) ? desc[2] : desc['default'];
           def.allowNull = desc.allowNull ? desc.allowNull : false;
           if (desc.setOnce) def.setOnce = true;
-          if (def.required && _.isUndefined(def.default)) def.default = this._getDefaultForType(type);
+          if (def.required && _.isUndefined(def['default'])) def['default'] = this._getDefaultForType(type);
           def.test = desc.test;
           def.values = desc.values;
         }
@@ -770,7 +770,7 @@
               }
               return result;
             }
-            return def.default;
+            return def['default'];
           }
         });
 
@@ -790,7 +790,7 @@
           def = this._definition[item];
           if (!def.session || (includeSession && def.session)) {
             val = (raw) ? this._values[item] : this[item];
-            if (typeof val === 'undefined') val = def.default;
+            if (typeof val === 'undefined') val = def['default'];
             if (typeof val !== 'undefined') res[item] = val;
           }
         }
