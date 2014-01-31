@@ -750,7 +750,14 @@
           def.default = !_.isUndefined(desc[2]) ? desc[2] : desc.default;
           def.allowNull = desc.allowNull ? desc.allowNull : false;
           if (desc.setOnce) def.setOnce = true;
-          if (def.required && _.isUndefined(def.default)) def.default = this._getDefaultForType(type);
+          if (def.required) {
+            if (_.isUndefined(def.default)) {
+              def.default = this._getDefaultForType(type);
+            }
+            else if (typeof def.default !== type) {
+              throw new Error('The specified default value does not match the property definition type.');
+            }
+          }
           def.test = desc.test;
           def.values = desc.values;
         }

@@ -117,6 +117,16 @@ $(function() {
     strictEqual(foo.thing, 'hi');
   });
 
+  test('should throw an error when setting a default value not matching its required type', function() {
+    throws(function () {
+      var Foo = HumanModel.define({
+        props: {
+          nickName: ['string', true, {}]
+        }
+      });
+    }, Error, 'The specified default value does not match the property\'s specified type.');
+  });
+
   test('Setting other properties when `extraProperties: "reject"` throws error', 1, function () {
     var Foo = HumanModel.define({
       extraProperties: 'reject'
