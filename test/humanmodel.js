@@ -125,7 +125,6 @@ $(function() {
         }
       });
     }, Error, 'The specified default value does not match the property\'s specified type.');
-
   });
 
   test('Setting other properties when `extraProperties: "reject"` throws error', 1, function () {
