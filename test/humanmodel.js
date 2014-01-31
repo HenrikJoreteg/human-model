@@ -117,7 +117,7 @@ $(function() {
     strictEqual(foo.thing, 'hi');
   });
 
-  test('should throw an error for setting a default value for a property that does not matching its specified type', function() {
+  test('should throw an error when setting a default value not matching its required type', function() {
     throws(function () {
       var Foo = HumanModel.define({
         props: {
