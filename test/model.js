@@ -335,7 +335,7 @@ $(document).ready(function() {
     model.unset('a');
   });
 
-  test("using a non-default id attribute.", 3, function() {
+  test("using a non-default id attribute.", 5, function() {
     var MongoModel = HumanModel.define({
       props: {
         id: 'string',
@@ -345,7 +345,9 @@ $(document).ready(function() {
       idAttribute : '_id'
     });
     var model = new MongoModel({id: 'eye-dee', _id: 25, title: 'Model'});
-    equal(model.get('id'), 'eye-dee');
+    equal(model.get('id'), 25);
+    equal(model.id, 25);
+    equal(model._id, 25);
     equal(model.getId(), 25);
     equal(model.isNew(), false);
   });
