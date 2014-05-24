@@ -763,6 +763,7 @@
             this.set(name, val);
           },
           get: function () {
+            if (name === 'id') name = this.idAttribute;
             var result = this._values[name];
             if (typeof result !== 'undefined') {
               if (dataTypes[def.type] && dataTypes[def.type].get) {
