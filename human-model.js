@@ -752,7 +752,7 @@
           if (desc.setOnce) def.setOnce = true;
           if (def.required && _.isUndefined(def.default)) def.default = this._getDefaultForType(type);
           def.test = desc.test;
-          def.values = desc.values;
+          def.values = _.isArray(desc) ? undefined : desc.values;
         }
         if (isSession) def.session = true;
 
