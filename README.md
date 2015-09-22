@@ -1,5 +1,7 @@
 # human-model
 
+**Deprecation warning:** please use [ampersand-model](https://github.com/ampersandjs/ampersand-model) instead.
+
 <!-- starthide -->
 Part of the [Human Javascript toolkit](http://docs.humanjavascript.com) for building clientside applications.
 <!-- endhide -->
