@@ -7,8 +7,8 @@
     "url": "https://github.com/henrikjoreteg/human-model.git"
   },
   "dependencies": {
-    "backbone": "1.0.0",
-    "underscore": "1.5.1"
+    "backbone": "~1.1.2",
+    "underscore": "~1.6.0"
   },
   "devDependencies": {
     "precommit-hook": "0.3.8",
