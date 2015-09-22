@@ -649,6 +649,7 @@
           } else {
             val = this._getDefaultForType(type);
           }
+          val = _result(val, this);
           return this.set(attr, val, options);
         } else {
           return this.set(attr, val, _.extend({}, options, {unset: true}));
@@ -679,9 +680,9 @@
         if (type === 'string') {
           return '';
         } else if (type === 'object') {
-          return {};
+          return function() { return {}; };
         } else if (type === 'array') {
-          return [];
+          return function() { return []; };
         }
       },
 
@@ -770,7 +771,7 @@
               }
               return result;
             }
-            return def.default;
+            return _result(def.default, this);
           }
         });
 
@@ -790,7 +791,7 @@
           def = this._definition[item];
           if (!def.session || (includeSession && def.session)) {
             val = (raw) ? this._values[item] : this[item];
-            if (typeof val === 'undefined') val = def.default;
+            if (typeof val === 'undefined') val = _result(def.default, this);
             if (typeof val !== 'undefined') res[item] = val;
           }
         }
@@ -844,6 +845,11 @@
     HumanModel.registry = registry;
 
     return HumanModel;
+  };
+
+  // like _.result(obj, property) but doesn't require an object/property
+  var _result = function (val, context) {
+    return _.isFunction(val) ? val.call(context) : val;
   };
 
   // Wrap an optional error callback with a fallback error event.

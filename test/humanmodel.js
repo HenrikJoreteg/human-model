@@ -678,4 +678,34 @@ $(function() {
     m.toggle('truth');
     equal(m, temp);
   });
+
+  test('should run function if provided as a default value', function() {
+    var my_id_generator = function() { return '1234'; },
+        Model = HumanModel.define({
+          props: {
+            id: ['string', true, my_id_generator],
+            created_timestamp: ['date', true, function() { return new Date() }]
+          }
+        });
+
+    m = new Model();
+    
+    equal(m.id, '1234');
+    ok(m.created_timestamp instanceof Date);
+  });
+
+  test('that default values for objects are unique references', function() {
+    var Model = HumanModel.define({
+      props: {
+        arr: ['array', true],
+        obj: ['object', true]
+      }
+    });
+
+    m1 = new Model();
+    m2 = new Model();
+    
+    ok(m1.arr !== m2.arr);
+    ok(m1.obj !== m2.obj);
+  });
 });
